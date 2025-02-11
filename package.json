@@ -1,0 +1,27 @@
+{
+  "name": "vera_ai",
+  "version": "1.0.0",
+  "description": "Vera (Virtual Interview and Recruitment Assistant) is an AI video interview agent designed to help you prepare for the interview process.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Byrrajus12/vera_ai.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Byrrajus12/vera_ai/issues"
+  },
+  "homepage": "https://github.com/Byrrajus12/vera_ai#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
+  }
+}

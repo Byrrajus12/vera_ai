@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interviewer (WebRTC)</title>
+</head>
+<body>
+    <h1>AI Interviewer</h1>
+    <button onclick="startInterview()">Start Interview</button>
+    <audio id="audio-output" autoplay></audio>
+
+    <script>
+        async function getEphemeralKey() {
+            const response = await fetch("http://localhost:3000/session");  // Calls Node.js backend
+            const data = await response.json();
+            return data.client_secret.value;  // Extracts ephemeral key
+        }
+
+        async function startInterview() {
+            const API_KEY = await getEphemeralKey();  // Fetches ephemeral key dynamically
+
+            const pc = new RTCPeerConnection();
+            const audioElement = document.getElementById("audio-output");
+            pc.ontrack = event => {
+                audioElement.srcObject = event.streams[0];
+            };
+
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            pc.addTrack(stream.getTracks()[0]);
+
+            const baseUrl = "https://api.openai.com/v1/realtime";
+            const model = "gpt-4o-realtime-preview-2024-12-17";
+            
+            const offer = await pc.createOffer();
+            await pc.setLocalDescription(offer);
+
+            const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
+                method: "POST",
+                body: offer.sdp,
+                headers: {
+                    Authorization: `Bearer ${API_KEY}`,
+                    "Content-Type": "application/sdp"
+                },
+            });
+
+            const answer = { type: "answer", sdp: await sdpResponse.text() };
+            await pc.setRemoteDescription(answer);
+        }
+    </script>
+</body>
+</html>
